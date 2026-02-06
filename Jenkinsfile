@@ -10,13 +10,7 @@ pipeline {
 
         stage("Tests") {
             steps {
-                sh """
-                docker run --rm \
-                  -v "\$PWD":/app \
-                  -w /app \
-                  maven:3.9.6-eclipse-temurin-17 \
-                  mvn clean test
-                """
+                sh "mvn clean test"
             }
         }
 
