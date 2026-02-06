@@ -15,14 +15,11 @@ pipeline {
         }
 
         stage("Tests") {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-17'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'
-                }
-            }
-            steps {
-                sh "mvn clean test"
+            script {
+                docker.image('maven:3.9.6-eclipse-temurin-17')
+                        .inside('-v /var/run/docker.sock:/var/run/docker.sock') {
+                            sh "mvn clean test"
+                        }
             }
         }
 
