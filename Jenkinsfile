@@ -54,7 +54,7 @@ pipeline {
         stage("Deploy") {
             steps {
                 sh """
-                ssh vps-user@20.39.242.179 '
+                ssh azureuser@20.39.242.179 '
                   cd /opt/apps/crud-app &&
                   sudo sed -i "s/BACKEND_TAG=.*/BACKEND_TAG=${TAG}/" .env &&
                   docker compose pull backend &&
