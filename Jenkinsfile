@@ -6,7 +6,7 @@ pipeline {
     }
     tools {
         maven "mvn"
-        docker "docker"
+        Docker "docker"
     }
 
     environment {
