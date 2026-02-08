@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout()
+    }
+    tools {
+        maven "mvn"
+    }
+
     environment {
         IMAGE_NAME = "ghaithsaidani/crud-spring"
         TAG = "${BUILD_NUMBER}"
