@@ -21,6 +21,32 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube-25.4.0.105899') {
+                    sh 'mvn sonar:sonar'
+                }
+            }
+
+            post {
+                success {
+                    script {
+                        timeout(time: 2, unit: 'MINUTES') {
+                            def qualityGate = waitForQualityGate()
+                            if (qualityGate.status != 'OK') {
+                                error "SonarQube Quality Gate failed: ${qualityGate.status}"
+                            } else {
+                                echo "SonarQube analysis passed."
+                            }
+                        }
+                    }
+                }
+                failure {
+                    echo "SonarQube analysis failed during execution."
+                }
+            }
+        }
+
         stage("Build Jar") {
             steps {
                 sh "mvn clean package -DskipTests"
@@ -39,9 +65,9 @@ pipeline {
         stage("Push to Docker Hub") {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-cred',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
+                        credentialsId: 'dockerhub-cred',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
                 )]) {
                     sh """
                     echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
